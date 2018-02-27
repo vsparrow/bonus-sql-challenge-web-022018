@@ -21,7 +21,8 @@ require 'csv'
 
 
 
-
+# QUICKTIME **********************************
+#mpg to gif
 db = SQLite3::Database.new ":memory:"
 sql = <<-SQL
   create table guests(
@@ -29,7 +30,8 @@ sql = <<-SQL
     occupation text,
     show_date datetime,
     genre text,
-    name texts
+    name text
+    -- id INTEGER PRIMARY KEY
   )
 SQL
 db.execute(sql)
@@ -41,9 +43,11 @@ db.execute(sql)
 
 
 CSV.foreach("./daily_show_guests.csv") do |row|  #./relative to where you run the file. ERRORNO file from ../ but ./ was ok
-  puts "#{row}"
-  db.execute "insert into guests values ( ?, ? ,?,?,?)", row[0],row[1],row[2],row[3],row[4]
+  # puts "#{row}"
+  db.execute "insert into guests values ( ?, ? ,?,?,?)", row[0],row[1],row[2],row[3],row[4] #MAKE EXPLICIT
 end #foreach
 
-puts "#{db.execute('select * from guests Limit 2    ')}"
+# puts "#{db.execute('select * from guests Limit 2    ')}"
 # [["YEAR", "GoogleKnowlege_Occupation", "Show", "Group", "Raw_Guest_List"], [1999, "actor", "1/11/99", "Acting", "Michael J. Fox"]]
+db.execute('delete from guests where occupation="GoogleKnowlege_Occupation"') #removes the first row that we dont want
+puts "#{db.execute('select * from guests Limit 2 ')}"
