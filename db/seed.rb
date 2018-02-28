@@ -123,7 +123,7 @@ class Show# < ActiveRecord::Base
   end
 
   # Which year had the most guests?
-  def year_with_the_most_guests
+  def year_with_the_most_guests # *********************************************** COMPLETED
     # "inside year_with_the_most_guests"
     years = self.years_show_hosted
     sql = <<-SQL
@@ -152,6 +152,23 @@ class Show# < ActiveRecord::Base
     # if band minus 1 (for the 1 added)
   end
 
+  # What was the most popular "Group" for each year Jon Stewart hosted?
+  def most_popular_group_each_year
+    # x =DB[:conn].execute("PRAGMA table_info(guests) ")
+    # puts x
+    years = self.years_show_hosted
+    # puts "#{years}"
+    group_and_year = []
+    years.each do |year|
+      popular_genre = [popular_column_of_year("genre",year[0])[0],year[0]]
+      # puts "#{popular_genre}"
+      # puts popular_genre
+      # grou
+      group_and_year << popular_genre
+    end #each
+    group_and_year
+  end #most_popular_group_each_year
+
 end #class
 
 
@@ -173,3 +190,6 @@ puts "***********************************************"
   puts "show.dates_guest_appeared_on_show(guest) : Patrick Stewart : #{show.dates_guest_appeared_on_show('Patrick Stewart')}"
 puts "***********************************************"
 puts "show.year_with_the_most_guests : #{show.year_with_the_most_guests}"
+puts "***********************************************"
+puts "  # What was the most popular group for each year Jon Stewart hosted?"
+puts "show.most_popular_group_each_year : #{show.most_popular_group_each_year}"
