@@ -67,11 +67,14 @@ class Show# < ActiveRecord::Base
     returnval[0][0]
   end #guest_with_most_appearances
 
-  def popular_column_of_all_time(column) # ***************************************************
-    all_years = self.years_show_hosted
-    puts "#{all_years}" # [[1999], [2000], [2001], [2002], [2003], [2004], [2005], [2006], [2007], [2008], [2009], [2010], [2011], [2012], [2013], [2014], [2015]]
-    popular_column_array = self.popular_profession_of_each_year(column)
-    puts "#{popular_column_array}"
+  def popular_column_of_all_time(column) # *********************************************COMPLETED
+    sql = <<-SQL
+    select #{column},count(#{column}) from guests
+    GROUP by #{column} having count(#{column}) > 0
+    order by count(#{column}) DESC LIMIT 1
+    SQL
+    returnval=DB[:conn].execute(sql)
+    returnval[0] # [column_value,count]
   end
 
   def popular_column_of_year(column,year) # *********************************************COMPLETED
@@ -85,7 +88,7 @@ class Show# < ActiveRecord::Base
     returnval[0] # [column_value,count]
   end #popular_profession_of_year
 
-  def popular_profession_of_each_year
+  def popular_profession_of_each_year # **************************************************COMPLETED
     # puts "METHOD: popular_profession_of_each_year"
     years = self.years_show_hosted
     profession_array = []
@@ -110,6 +113,15 @@ class Show# < ActiveRecord::Base
     count
   end #people_with_the_first_name_bill
 
+  # What dates did Patrick Stewart appear on the show?
+  def dates_guest_appeared_on_show(findguest)
+    sql = <<-SQL
+      select show_date from guests
+      where name = "#{findguest}"
+    SQL
+    dates = DB[:conn].execute(sql) # [["4/12/00"], ["4/21/03"], ["11/7/13"]]
+  end
+
 end #class
 
 
@@ -126,5 +138,6 @@ puts "show.count_people_with_the_first_name_bill : #{show.count_people_with_the_
 puts "***********************************************"
 puts "show.popular_profession_of_each_year : #{show.popular_profession_of_each_year}"
 puts "***********************************************"
-
-# show.popular_column_of_all_time("profession")
+puts "show.popular_column_of_all_time(column) : profession : #{show.popular_column_of_all_time('profession')}"
+puts "***********************************************"
+  puts "show.dates_guest_appeared_on_show(guest) : Patrick Stewart : #{show.dates_guest_appeared_on_show('Patrick Stewart')}"
