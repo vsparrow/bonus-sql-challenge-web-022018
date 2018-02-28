@@ -86,16 +86,13 @@ class Show# < ActiveRecord::Base
   end #popular_profession_of_year
 
   def popular_profession_of_each_year
-    puts "METHOD: popular_profession_of_each_year"
-    years = years_show_hosted
-    # puts "#{years}" #[[1999], [2000], [2001], [2002], [2003], [2004], [2005], [2006], [2007], [2008], [2009], [2010], [2011], [2012], [2013], [2014], [2015]]
+    # puts "METHOD: popular_profession_of_each_year"
+    years = self.years_show_hosted
     profession_array = []
     years.each do |year|
-      popular = popular_column_of_year("profession",year[0])
-      profession_array << [popular,year]
-      puts "The most popular profession of #{year} is #{popular[0][0]}" #[[1999], [2000], [2001], [2002], [2003], [2004], [2005], [2006], [2007], [2008], [2009], [2010], [2011], [2012], [2013], [2014], [2015]]
+      profession = popular_column_of_year("profession",year[0])
+      profession_array << [profession[0],year[0]]
     end #each
-    # puts "****#{profession_array}" #[[[["actor", 53]], [1999]], [[["actor", 61]], [2000]], [[["actor", 62]], [2001]], [[["actor", 64]], [2002]], [[["actor", 47]], [2003]], [[["actor", 31]], [2004]], [[["actor", 25]], [2005]], [[["actor", 33]], [2006]], [[["actor", 15]], [2007]], [[["actor", 20]], [2008]], [[["actor", 19]], [2009]], [[["actor", 30]], [2010]], [[["actor", 29]], [2011]], [[["actor", 20]], [2012]], [[["actor", 37]], [2013]], [[["actor", 31]], [2014]], [[["actor", 19]], [2015]]]
     profession_array
   end #end popular_profession_of_each_year
   def years_show_hosted
@@ -106,7 +103,7 @@ class Show# < ActiveRecord::Base
   def count_people_with_the_first_name_bill #***************************************COMPLETED
     sql = <<-SQL
       select count(name) from guests
-      where name Like 'Bill%'
+      where name Like '%Bill%'
       SQL
     count = DB[:conn].execute(sql)[0][0]
     # puts "*********count_people_with_the_first_name_bill #{count}"
@@ -120,8 +117,14 @@ end #class
 show=Show.new
 
 puts "show.guest_with_most_appearances : #{show.guest_with_most_appearances}"
+puts "***********************************************"
 puts "helper show.years_show_hosted : #{show.years_show_hosted}"
+puts "***********************************************"
 puts "helper show.popular_column_of_year(column,YEAR_integer) : #{show.popular_column_of_year("profession",1999)}"
+puts "***********************************************"
 puts "show.count_people_with_the_first_name_bill : #{show.count_people_with_the_first_name_bill}"
-# show.popular_profession_of_each_year
+puts "***********************************************"
+puts "show.popular_profession_of_each_year : #{show.popular_profession_of_each_year}"
+puts "***********************************************"
+
 # show.popular_column_of_all_time("profession")
