@@ -122,6 +122,36 @@ class Show# < ActiveRecord::Base
     dates = DB[:conn].execute(sql) # [["4/12/00"], ["4/21/03"], ["11/7/13"]]
   end
 
+  # Which year had the most guests?
+  def year_with_the_most_guests
+    # "inside year_with_the_most_guests"
+    years = self.years_show_hosted
+    sql = <<-SQL
+      select count(name) from guests
+      where year = ?
+    SQL
+    guest_count = []
+    years.each do |year|
+      count = DB[:conn].execute(sql,year)[0][0]
+      # puts "#{count}, #{year[0]}"
+      guest_count << [count,year[0]]
+    end
+    # puts "#{guest_count}"
+    highest_guest = 0
+    highest_year = 0
+    guest_count.each do |count_and_year|
+      if count_and_year[0] > highest_guest
+        highest_guest = count_and_year[0]
+        highest_year = count_and_year[1]
+      end
+    end
+    highest_year
+    # some dates had more than one guest
+    # if and then add 1
+    # if also add 1
+    # if band minus 1 (for the 1 added)
+  end
+
 end #class
 
 
@@ -141,3 +171,5 @@ puts "***********************************************"
 puts "show.popular_column_of_all_time(column) : profession : #{show.popular_column_of_all_time('profession')}"
 puts "***********************************************"
   puts "show.dates_guest_appeared_on_show(guest) : Patrick Stewart : #{show.dates_guest_appeared_on_show('Patrick Stewart')}"
+puts "***********************************************"
+puts "show.year_with_the_most_guests : #{show.year_with_the_most_guests}"
